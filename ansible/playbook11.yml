@@ -1,0 +1,18 @@
+- name:  Add ELK Repository
+  hosts: all
+  become: yes
+  roles:
+    - elk-repo
+
+- name:  Install ELK
+  hosts: elk
+  become: yes
+  roles:
+    - elk
+
+- name:  Install Nginx and Filebeat
+  hosts: web
+  become: yes
+  roles:
+    - nginx
+    - filebeat

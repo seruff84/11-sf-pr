@@ -1,0 +1,10 @@
+/venv
+/.terraform
+/.idea
+/ansible/inventory
+terraform/terraform.tfstate*
+terraform/.terraform.*
+terraform/secret.auto.tfvars
+terraform/terraform.lock.hcl
+terraform/vaul
+t_pass

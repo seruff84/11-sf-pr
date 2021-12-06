@@ -1,0 +1,36 @@
+---
+# tasks file for filebeat
+#--------------------------
+# Installing Filebeat
+#--------------------------
+
+# Install Filebeat
+- name: Install Filebeat with apt
+  apt:
+   name: filebeat
+   update_cache: yes
+
+- name: Configure filebeat
+  ansible.builtin.template:
+    src=filebeat.yml.j2
+    dest=/etc/filebeat/filebeat.yml
+    owner=root
+    group=root
+    mode=0644
+
+- name: Enable filebeat module
+  ansible.builtin.shell: filebeat modules enable system nginx
+
+- name: Disable auth log
+  ansible.builtin.replace:
+    path: /etc/filebeat/modules.d/system.yml
+    after: 'auth:'
+    regexp: '^( *enabled: *)true$'
+    replace: '\1false'
+
+# Starting Filebeat
+- name: Starting Filebeat
+  service:
+   name: filebeat
+   state: started
+   enabled: yes

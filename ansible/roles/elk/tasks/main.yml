@@ -1,0 +1,95 @@
+---
+# tasks file for elk
+
+#--------------------------
+# Installing Elasticsearch
+#--------------------------
+
+# Installing Elasticsearch
+- name: Install Elasticsearch
+  apt:
+   name: elasticsearch
+   update_cache: yes
+
+# Update Elasticsearch config file
+#- name: Updating the config file to allow outside access
+#  lineinfile:
+#   destfile: /etc/elasticsearch/elasticsearch.yml
+#   regexp: 'network.host:'
+#   line: 'network.host: 0.0.0.0'
+
+# Update Elasticsearch port in config file
+- name: Updating the port in config file
+  lineinfile:
+   destfile: /etc/elasticsearch/elasticsearch.yml
+   regexp: 'http.port:'
+   line: 'http.port: 9200'
+
+# Start Elasticsearch
+- name: Starting Elasticsearch
+  service:
+   name: elasticsearch
+   state: started
+   enabled: yes
+
+#--------------------------
+# Installing Kibana
+#--------------------------
+
+# Install Kibana
+- name: Install Kibana with apt
+  apt:
+   name: kibana
+   update_cache: yes
+
+# Configurations
+- name: Updating the config file to allow outside access
+  lineinfile:
+   destfile: /etc/kibana/kibana.yml
+   regexp: 'server.host:'
+   line: 'server.host: 0.0.0.0'
+
+- name: Defining server port
+  lineinfile:
+   destfile: /etc/kibana/kibana.yml
+   regexp: 'server.port:'
+   line: 'server.port: 5601'
+
+- name: Defining Elasticsearch URL
+  lineinfile:
+   destfile: /etc/kibana/kibana.yml
+   regexp: 'elasticsearch.hosts:'
+   line: 'elasticsearch.hosts: ["http://localhost:9200"]'
+
+# Starting Kibana
+- name: Starting Kibana
+  service:
+   name: kibana
+   state: started
+   enabled: yes
+
+#--------------------------
+# Installing Logstash
+#--------------------------
+
+# Install Logstash
+- name: Update repositories cache and install Logstash
+  apt:
+   name: logstash
+   update_cache: yes
+
+# Configure Logstash filter.conf config file
+- name: Configure  Filter
+  ansible.builtin.template:
+    src=filebeat.conf.j2
+    dest=/etc/logstash/conf.d/filebeat.conf
+    owner=root
+    group=root
+    mode=0644
+
+
+- name: Start Logstash service
+  service:
+    name: logstash
+    state: started
+    enabled: yes
