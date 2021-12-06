@@ -6,5 +6,4 @@ terraform/terraform.tfstate*
 terraform/.terraform.*
 terraform/secret.auto.tfvars
 terraform/terraform.lock.hcl
-terraform/vaul
-t_pass
+terraform/vault_pass
